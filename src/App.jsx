@@ -1,9 +1,6 @@
 import { useState, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
 
-let wps = [{link:"lofi_cat.png"}]
+let wps = [{link:"lofi_cat.png"}, {link:"night_city.png"}]
 
 function Todo({ todo, index, toggleTodo, removeTodo}) {
 
@@ -43,16 +40,15 @@ function TodoForm({ addTodo }) {
         type="text"
         className="w-full bg-gray-600 bg-opacity-50 border-none p-2 rounded-md text-white"
         value={value}
-        onChange={e => setValue(e.target.value)}
+        onChange={e => {
+          setValue(e.target.value)
+        }}
       />
     </form>
   );
 }
 
-function App() {
-  useEffect(()=>{
-    document.body.background = "/backgrounds/"+wps[0].link;
-  },[])
+function App({todos_, todos_index}) {
   const toggleTodo = index => {
     const newTodos = [...todos];
     newTodos[index].isCompleted = !newTodos[index].isCompleted;
@@ -63,28 +59,13 @@ function App() {
     newTodos[index].exists = false
     setTodos(newTodos);
   }
-  const [todos, setTodos] = useState([
-    {
-      text: "Study",
-      isCompleted: false,
-      exists: true,
-    },
-    {
-      text: "Eat",
-      isCompleted: false,
-      exists: true,
-    },
-    {
-      text: "Build a really cool todo app",
-      isCompleted: false,
-      exists: true,
-    },
-  ]);
-  const [count, setCount] = useState(0)
+  const [todos, setTodos] = useState(todos_.tasks);
+  const [todoName, setTodoName] = useState(todos_.name)
 
   const addTodo = text => {
     const newTodos = [...todos, { text, isCompleted: false, exists: true }];
     setTodos(newTodos);
+    // localStorage.setItem('todo_lists', JSON.stringify(newTodos))
   };
 
   return (
@@ -103,8 +84,17 @@ function App() {
         </div>
         <TodoForm addTodo={addTodo} />
       </div>
-      <button className="absolute fixed bottom-2 right-2 p-4 text-white font-extrabold rounded-md backdrop-blur"
-        onClick={()=>console.log('ouch!')}>UwU</button>
+      <div className="absolute fixed bottom-2 right-2 p-4 text-white font-extrabold rounded-md backdrop-blur">
+          <input className="bg-gray-600 bg-opacity-50 rounded-lg p-2" value={todoName} onChange={e=>{
+            setTodoName(e.target.value)
+              let newTodos = JSON.parse(localStorage.getItem('todo_lists')) || []
+              console.log(newTodos)
+              newTodos[todos_index].name = e.target.value
+              localStorage.setItem('todo_lists', JSON.stringify(newTodos))
+            
+          }}/>
+          <button className="px-4">UwU</button>
+      </div>
     </div>
   )
 }
